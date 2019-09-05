@@ -1,1 +1,1 @@
-# auto_trade_Bithumb
+# auto_trade_Upbit
