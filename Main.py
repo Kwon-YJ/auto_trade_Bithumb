@@ -13,7 +13,7 @@ while(True):
     List_ohlcv = []
     for i in range(93): #총 93개의 코인이 업비트 원화거래소에서 사용된다.
         List_ohlcv.append(pybithumb.get_ohlcv(List_tickers[i]))
-        #time.sleep(0.09) #논오버클럭 라이젠 2600 CPU기준으로 0.09초의 슬립이 없을 경우, 리퀘스트속도가 CPU속도를 따라잡지 못해 NoneType에러가 발생했다.
+        time.sleep(0.09) #논오버클럭 라이젠 2600 CPU기준으로 0.09초의 슬립이 없을 경우, 리퀘스트속도가 CPU속도를 따라잡지 못해 NoneType에러가 발생했다.
     while(True):
         for i in range(0,87):
             order(List_ohlcv[i], List_tickers[i])
