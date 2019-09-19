@@ -4,9 +4,10 @@ import datetime
 from ATR import day_ago, get_TR, get_ATR
 from Data_Group import bithumb, Q1, Q2, Q3, Q4, now
 import pickle
+import os
 
 def order(ticker_data, ticker_name):
-    with open('data.pickle', 'rb') as f:
+    with open(str(os.getcwd())+'/data.pickle', 'rb') as f:
         data = pickle.load(f)
     if ticker_name not in data:
         buy_order(ticker_data, ticker_name)
@@ -17,34 +18,34 @@ def buy_order(ticker, ticker_name):
     a = pybithumb.get_current_price(ticker_name) # 현재가
     b = 0.5 * get_ATR(ticker) + day_ago(2, 'close', ticker).values # 전일종가 + 0.5ATR
     if a>b:
-        f = open('money', 'r')
+        f = open(str(os.getcwd())+'/money', 'r')
         krw = float(f.readline())
         f.close
         orderbook = pybithumb.get_orderbook(ticker_name) #해당 코인 호가 조회  
         sell_price = orderbook['asks'][0]['price'] #최우선 매도 호가 계산
         unit = krw*0.1/sell_price #매수 수량
         print("매수:" + ticker_name + ", 단가 :", sell_price, '수량:', unit)
-        f = open('money', 'w')
+        f = open(str(os.getcwd())+'/money', 'w')
         money = str(float(krw) - (sell_price * unit))
         f.write(money)
         f.close
         print(datetime.datetime.now())
-        with open('data.pickle', 'rb') as f:
+        with open(str(os.getcwd())+'/data.pickle', 'rb') as f:
                 data = pickle.load(f)              
         data[ticker_name] = unit
-        with open('data.pickle', 'wb') as f:
+        with open(str(os.getcwd())+'/data.pickle', 'wb') as f:
                 pickle.dump(data, f, pickle.HIGHEST_PROTOCOL)
 
 def sell_order(ticker_data, ticker_name):
     if Q1 < datetime.datetime.now() < Q1 + datetime.timedelta(seconds=30)or Q2 < datetime.datetime.now() < Q2 + datetime.timedelta(seconds=30)or Q3 < datetime.datetime.now() < Q3 + datetime.timedelta(seconds=30)or Q4 < datetime.datetime.now() < Q4 + datetime.timedelta(seconds=30):
-        f = open('money', 'r')
+        f = open(str(os.getcwd())+'/money', 'r')
         krw = float(f.readline())
         f.close
         price = pybithumb.get_current_price(ticker_name)
-        with open('data.pickle', 'rb') as f:
+        with open(str(os.getcwd())+'/data.pickle', 'rb') as f:
                 data = pickle.load(f)
         unit = data[ticker_name]
-        f = open('money', 'w')
+        f = open(str(os.getcwd())+'/money', 'w')
         money = str(float(krw) + (price * unit))
         f.write(money)
         f.close
